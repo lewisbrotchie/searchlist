@@ -1,10 +1,25 @@
 import React, { Component } from "react";
 
 class SearchBar extends Component {
+  constructor(props) {
+    super(props);
+
+    this.handleSearchTextChange = this.handleSearchTextChange.bind(this);
+  }
+
+  handleSearchTextChange(e) {
+    this.props.onSearchTextChange(e.target.value);
+  }
+
   render() {
     return (
       <form>
-        <input type="text" placeholder="Search..." />
+        <input
+          type="text"
+          placeholder="Search..."
+          value={this.props.searchText}
+          onChange={this.handleSearchTextChange}
+        />
       </form>
     );
   }
@@ -12,9 +27,14 @@ class SearchBar extends Component {
 
 class CountryTable extends Component {
   render() {
+    const searchText = this.props.searchText;
     const rows = [];
 
     this.props.countries.forEach(country => {
+      let lowerCase = country.name.toLowerCase();
+      if (lowerCase.indexOf(searchText) === -1) {
+        return;
+      }
       rows.push(
         <CountryRow
           name={country.name}
@@ -23,6 +43,7 @@ class CountryTable extends Component {
         />
       );
     });
+
     return (
       <table>
         <thead>
@@ -49,12 +70,31 @@ class CountryRow extends Component {
 }
 
 export default class FilterableSearchList extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      searchText: ""
+    };
+
+    this.handleSearchTextChange = this.handleSearchTextChange.bind(this);
+  }
+  handleSearchTextChange(searchText) {
+    this.setState({
+      searchText: searchText
+    });
+  }
   render() {
     return (
       <div>
-        <SearchBar />
+        <SearchBar
+          searchText={this.state.searchText}
+          onSearchTextChange={this.handleSearchTextChange}
+        />
         <br />
-        <CountryTable countries={this.props.countries} />
+        <CountryTable
+          countries={this.props.countries}
+          searchText={this.state.searchText}
+        />
       </div>
     );
   }
