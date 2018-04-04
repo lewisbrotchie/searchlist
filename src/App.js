@@ -1,21 +1,61 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
 
-class App extends Component {
+class SearchBar extends Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
+      <form>
+        <input type="text" placeholder="Search..." />
+      </form>
     );
   }
 }
 
-export default App;
+class CountryTable extends Component {
+  render() {
+    const rows = [];
+
+    this.props.countries.forEach(country => {
+      rows.push(
+        <CountryRow
+          name={country.name}
+          code={country.code}
+          key={country.name}
+        />
+      );
+    });
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th align="left">Country</th>
+            <th>Code</th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+    );
+  }
+}
+
+class CountryRow extends Component {
+  render() {
+    return (
+      <tr>
+        <td>{this.props.name}</td>
+        <td>{this.props.code}</td>
+      </tr>
+    );
+  }
+}
+
+export default class FilterableSearchList extends Component {
+  render() {
+    return (
+      <div>
+        <SearchBar />
+        <br />
+        <CountryTable countries={this.props.countries} />
+      </div>
+    );
+  }
+}
