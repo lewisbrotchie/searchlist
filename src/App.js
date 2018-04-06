@@ -26,23 +26,21 @@ class SearchBar extends Component {
 }
 
 class CountryTable extends Component {
-  render() {
-    const searchText = this.props.searchText;
-    const rows = [];
+  constructor(props) {
+    super(props);
+    this.filterSearchTerm = this.filterSearchTerm.bind(this);
+  }
 
-    this.props.countries.forEach(country => {
-      let lowerCase = country.name.toLowerCase();
-      if (lowerCase.indexOf(searchText) === -1) {
-        return;
-      }
-      rows.push(
-        <CountryRow
-          name={country.name}
-          code={country.code}
-          key={country.name}
-        />
-      );
-    });
+  filterSearchTerm(country) {
+    let lowerCase = country.name.toLowerCase();
+    if (lowerCase.indexOf(this.props.searchText) === -1) {
+      return false;
+    }
+    return true;
+  }
+
+  render() {
+    const { countries } = this.props;
 
     return (
       <table>
@@ -52,7 +50,17 @@ class CountryTable extends Component {
             <th>Code</th>
           </tr>
         </thead>
-        <tbody>{rows}</tbody>
+        <tbody>
+          {countries
+            .filter(this.filterSearchTerm)
+            .map(country => (
+              <CountryRow
+                name={country.name}
+                code={country.code}
+                key={country.name}
+              />
+            ))}
+        </tbody>
       </table>
     );
   }
